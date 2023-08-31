@@ -1,0 +1,176 @@
+[gd_scene load_steps=13 format=3 uid="uid://djdysd0edx4ey"]
+
+[ext_resource type="Texture2D" uid="uid://pkib1hayhgje" path="res://img/enemy/Skeleton Idle.png" id="1_7g3vc"]
+[ext_resource type="PackedScene" uid="uid://bjkrosr7enp81" path="res://scenes/hurtbox.tscn" id="2_51iav"]
+[ext_resource type="PackedScene" uid="uid://l5b0ddx84nmj" path="res://scenes/hitbox.tscn" id="3_b80uh"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_e8855"]
+radius = 7.0
+height = 14.0
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_cd3br"]
+animation = &"RESET"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_qwiiq"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_j4xcp"]
+states/End/position = Vector2(856, 170.125)
+states/RESET/node = SubResource("AnimationNodeAnimation_cd3br")
+states/RESET/position = Vector2(422.295, 120.957)
+states/Start/position = Vector2(200.5, 99.6719)
+transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_qwiiq")]
+graph_offset = Vector2(35.2951, 23.9571)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lkoum"]
+radius = 8.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ack04"]
+radius = 14.0357
+
+[sub_resource type="Animation" id="Animation_1rg61"]
+resource_name = "skeleton_ani"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("1_7g3vc")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:hframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [10]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 1,
+"values": []
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Sprite2D:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_brfn6"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:hframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [10]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_77loe"]
+_data = {
+"RESET": SubResource("Animation_brfn6"),
+"skeleton_ani": SubResource("Animation_1rg61")
+}
+
+[node name="Skeleton" type="CharacterBody2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(-0.752195, 0.0639839)
+scale = Vector2(0.914231, 1.01406)
+texture = ExtResource("1_7g3vc")
+offset = Vector2(4.23, -20.55)
+hframes = 10
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-2, -11)
+shape = SubResource("CapsuleShape2D_e8855")
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeStateMachine_j4xcp")
+anim_player = NodePath("../AnimationPlayer")
+active = true
+
+[node name="Hurtbox" parent="." instance=ExtResource("2_51iav")]
+collision_layer = 2
+collision_mask = 16
+
+[node name="CollisionShape2D" parent="Hurtbox" index="0"]
+position = Vector2(-1, -23)
+shape = SubResource("CircleShape2D_lkoum")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="Marker2D" type="Marker2D" parent="."]
+
+[node name="Hitbox" parent="Marker2D" instance=ExtResource("3_b80uh")]
+position = Vector2(27, 0)
+
+[node name="CollisionShape2D" parent="Marker2D/Hitbox" index="0"]
+position = Vector2(-11, -16)
+shape = SubResource("CircleShape2D_ack04")
+debug_color = Color(0.752941, 0.454902, 0, 0.419608)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(5.9, 5.9)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_77loe")
+}
+
+[editable path="Hurtbox"]
+[editable path="Marker2D/Hitbox"]
